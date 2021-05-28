@@ -499,4 +499,45 @@ static PyTypeObject SegmentationType = {
 static PySegmentation* Segmentation_create() {return (PySegmentation*)SegmentationType.tp_alloc(&SegmentationType, 0);}
 static bool PySegmentation_Check(PyObject* obj) {return (PyTypeObject*)(obj->ob_type) == &SegmentationType;}
 
+
+
+static PyObject* ipf_color_hcp(PyObject* self, PyObject* args, PyObject*& kwds) {
+
+        PyObject* array = NULL;
+        static char const* kwlist[] = {"array", NULL};
+        if(!PyArg_ParseTuple(args, "O", &array)) return NULL;
+
+        PyArrayObject* input = (PyArrayObject*)PyArray_FROM_OTF(array, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+        if(input == NULL) {
+                Py_XDECREF(input);
+                return NULL;
+        }
+        int ndims = PyArray_NDIM(input);
+        npy_intp* dims_in = PyArray_DIMS(input);
+
+        npy_intp dims_out[ndims];
+        for (int i=0; i<ndims-1; i++) {
+                dims_out[i] = dims_in[i];
+        }
+        dims_out[ndims-1] = 3;
+
+        PyArrayObject* output = (PyArrayObject*)PyArray_EMPTY(ndims, dims_out, NPY_DOUBLE, 0);
+
+        int totalPoints = 1;
+        for(npy_intp i = 0; i < ndims-1; i++) totalPoints *= (int)dims_in[i];
+
+        double* input_data = (double*)PyArray_DATA(input);
+        double* output_data = (double*)PyArray_DATA(output);
+
+        double refDir[3] = {0,0,1}; // assumes reference direction is [0,0,1]
+        double n[3];
+
+        for(int i=0; i < totalPoints; i++) {
+                quaternion::rotateVector(input_data+(4*i),refDir,n);
+                coloring::dihedralIpf<double,6>(n,output_data+(3*i));
+        }
+
+        return (PyObject*)output;
+}
+
 #endif//_orientation_map_wrapper_h_

@@ -103,6 +103,7 @@ static PyMethodDef CrystallographyMethods[] = {//{function name in python module
 	{"cu2ro",  (PyCFunction)cu2ro_wrapper, METH_VARARGS | METH_KEYWORDS, "cu2ro(cu, axis = cu.ndim-1), see module level conversion routine documentation for details"},
 	{"cu2qu",  (PyCFunction)cu2qu_wrapper, METH_VARARGS | METH_KEYWORDS, "cu2qu(cu, axis = cu.ndim-1), see module level conversion routine documentation for details"},
 	{"cu2ho",  (PyCFunction)cu2ho_wrapper, METH_VARARGS | METH_KEYWORDS, "cu2ho(cu, axis = cu.ndim-1), see module level conversion routine documentation for details"},
+	{"ipf_color_hcp", (PyCFunction)ipf_color_hcp, METH_VARARGS| METH_KEYWORDS, "Convert a quaternion array to IPF colors. Assumes hcp symmetry, and that last axis of matrix contains scalar-first quats"},
 	{NULL, NULL, 0, NULL}//sentinel
 };
 
