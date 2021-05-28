@@ -37,6 +37,7 @@ endif()
 find_package(PythonInterp 3 REQUIRED)
 
 # find python include directory
+execute_process(COMMAND ${PYTHON_EXECUTABLE} "-c" "from distutils import sysconfig;print(sysconfig.get_python_inc(),end='')" OUTPUT_VARIABLE Python_Output ERROR_VARIABLE Python_Error)
 STRING(REGEX REPLACE "\\\\" "/" Python_Output ${Python_Output}) # convert windows backslash to forward slash
 if(NOT "${Python_Error}" STREQUAL "")
 	message(FATAL_ERROR "failed to find python include directory: ${Python_Error}")
