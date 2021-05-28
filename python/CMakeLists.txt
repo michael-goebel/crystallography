@@ -37,7 +37,6 @@ endif()
 find_package(PythonInterp 3 REQUIRED)
 
 # find python include directory
-execute_process(COMMAND ${PYTHON_EXECUTABLE} "-c" "from distutils import sysconfig;print(sysconfig.get_python_inc(),end='')" OUTPUT_VARIABLE Python_Output ERROR_VARIABLE Python_Error)
 STRING(REGEX REPLACE "\\\\" "/" Python_Output ${Python_Output}) # convert windows backslash to forward slash
 if(NOT "${Python_Error}" STREQUAL "")
 	message(FATAL_ERROR "failed to find python include directory: ${Python_Error}")
@@ -60,12 +59,14 @@ if(WIN32)
 		find_library(PYTHON_LIBRARY libpython${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} HINT ${PYTHON_LIBRARY_DIR} CACHE FILE)
 	endif()
 else()
-	execute_process(COMMAND ${PYTHON_EXECUTABLE} "-c" "from distutils import sysconfig;print(sysconfig.get_config_var(\"LIBDIR\"),end='')" OUTPUT_VARIABLE Python_Output ERROR_VARIABLE Python_Error)
+	execute_process(COMMAND ${PYTHON_EXECUTABLE} "-c" "from distutils import sysconfig;print(sysconfig.get_config_var(\"LIBPL\"),end='')" OUTPUT_VARIABLE Python_Output ERROR_VARIABLE Python_Error)
+	#execute_process(COMMAND ${PYTHON_EXECUTABLE} "-c" "from distutils import sysconfig;print(sysconfig.get_config_var(\"LIBDIR\"),end='')" OUTPUT_VARIABLE Python_Output ERROR_VARIABLE Python_Error)
 	if(NOT "${Python_Error}" STREQUAL "")
 		message(FATAL_ERROR "failed to find python include directory: ${Python_Error}")
 	endif()
 	set(PYTHON_LIBRARY_DIR ${Python_Output} CACHE PATH "python library directories")
-	find_library(PYTHON_LIBRARY libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}m.dylib HINTS ${PYTHON_LIBRARY_DIR} CACHE FILE)
+	#find_library(PYTHON_LIBRARY libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}m.dylib HINTS ${PYTHON_LIBRARY_DIR} CACHE FILE)
+	find_library(PYTHON_LIBRARY libpython${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}m.so HINTS ${PYTHON_LIBRARY_DIR} CACHE FILE)
 endif()
 
 # find numpy
@@ -98,3 +99,4 @@ if(NOT "${Python_Error}" STREQUAL "")
 endif()
 set(PYTHON_MODULE_DIR ${Python_Output} CACHE PATH "python module install directory")
 install(TARGETS crystallography LIBRARY DESTINATION ${PYTHON_MODULE_DIR})
+
