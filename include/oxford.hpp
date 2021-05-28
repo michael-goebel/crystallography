@@ -228,7 +228,8 @@ std::vector<ctf::ColumnType> Oxford<T>::readCtfHeader(std::istream& is) {
 	//parse header
 	while(columnHeaders.empty()) {
 		is.getline(line, sizeof(line));//extract entire line from file
-		std::istringstream iss(line, sizeof(line));
+		//std::istringstream iss(line, sizeof(line));
+		std::istringstream iss(line);
 		if(iss >> token) {//get the key word if the line isn't blank
 			//get value for appropriate key
 			if       (0 == token.compare("Prj"      )) { project = iss.str(); readProject   = true;
@@ -262,7 +263,8 @@ std::vector<ctf::ColumnType> Oxford<T>::readCtfHeader(std::istream& is) {
 					//phase lines are formatted as 'a;b;c\talpha;beta;gamma\tname\tlaue_group\tspacegroup'
 					is.getline(line, sizeof(line));//extract entire line from file
 					std::replace(line, line + sizeof(line), ';', '\t');//convert to fully tab delimited to make things easier
-					iss = std::istringstream(line, sizeof(line));
+					//iss = std::istringstream(line, sizeof(line));
+					iss = std::istringstream(line);
 
 					//sanity check (phase lines should start with a digit)
 					iss >> std::skipws;
